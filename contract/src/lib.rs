@@ -18,6 +18,21 @@ use bounty::{
     cancel_bounty_auth, release_escrow, get_bounty_data, get_guild_bounties_list,
 };
 
+mod treasury;
+use treasury::{
+    initialize_treasury as core_initialize_treasury,
+    deposit as core_deposit,
+    propose_withdrawal as core_propose_withdrawal,
+    approve_transaction as core_approve_transaction,
+    execute_transaction as core_execute_transaction,
+    set_budget as core_set_budget,
+    get_balance as core_get_balance,
+    get_transaction_history as core_get_transaction_history,
+    grant_allowance as core_grant_allowance,
+    emergency_pause as core_emergency_pause,
+    Transaction,
+};
+use treasury::initialize_treasury_storage;
 
 /// Stellar Guilds - Main Contract Entry Point
 /// 
@@ -38,12 +53,9 @@ pub struct StellarGuildsContract;
 
 #[contractimpl]
 impl StellarGuildsContract {
-    /// Initialize the contract
-    /// 
-    /// Sets up the storage structures for guilds and members.
-    /// Must be called before any other operations.
     pub fn initialize(env: Env) -> bool {
         storage::initialize(&env);
+        initialize_treasury_storage(&env);
         true
     }
 
@@ -268,6 +280,97 @@ impl StellarGuildsContract {
     /// Get all bounties for a guild
     pub fn get_guild_bounties(env: Env, guild_id: u64) -> Vec<Bounty> {
         get_guild_bounties_list(&env, guild_id)
+    }
+
+    /// Treasury: initialize a new guild treasury
+    pub fn initialize_treasury(
+        env: Env,
+        guild_id: u64,
+        owner: Address,
+        signers: Vec<Address>,
+        approval_threshold: u32,
+        high_value_threshold: i128,
+    ) -> u64 {
+        core_initialize_treasury(&env, guild_id, owner, signers, approval_threshold, high_value_threshold)
+    }
+
+    /// Treasury: deposit into treasury
+    pub fn deposit(
+        env: Env,
+        treasury_id: u64,
+        depositor: Address,
+        amount: i128,
+        token: Option<Address>,
+    ) -> bool {
+        core_deposit(&env, treasury_id, depositor, amount, token)
+    }
+
+    /// Treasury: propose a withdrawal
+    pub fn propose_withdrawal(
+        env: Env,
+        treasury_id: u64,
+        proposer: Address,
+        recipient: Address,
+        amount: i128,
+        token: Option<Address>,
+        reason: String,
+    ) -> u64 {
+        core_propose_withdrawal(&env, treasury_id, proposer, recipient, amount, token, reason)
+    }
+
+    /// Treasury: approve a transaction
+    pub fn approve_transaction(env: Env, tx_id: u64, approver: Address) -> bool {
+        core_approve_transaction(&env, tx_id, approver)
+    }
+
+    /// Treasury: execute a transaction
+    pub fn execute_transaction(env: Env, tx_id: u64, executor: Address) -> bool {
+        core_execute_transaction(&env, tx_id, executor)
+    }
+
+    /// Treasury: set budget for a category
+    pub fn set_budget(
+        env: Env,
+        treasury_id: u64,
+        caller: Address,
+        category: String,
+        amount: i128,
+        period_seconds: u64,
+    ) -> bool {
+        core_set_budget(&env, treasury_id, caller, category, amount, period_seconds)
+    }
+
+    /// Treasury: get balance for a token (or XLM when None)
+    pub fn get_balance(env: Env, treasury_id: u64, token: Option<Address>) -> i128 {
+        core_get_balance(&env, treasury_id, token)
+    }
+
+    /// Treasury: get recent transaction history
+    pub fn get_transaction_history(env: Env, treasury_id: u64, limit: u32) -> Vec<Transaction> {
+        core_get_transaction_history(&env, treasury_id, limit)
+    }
+
+    /// Treasury: grant an allowance to an admin
+    pub fn grant_allowance(
+        env: Env,
+        treasury_id: u64,
+        owner: Address,
+        admin: Address,
+        amount: i128,
+        token: Option<Address>,
+        period_seconds: u64,
+    ) -> bool {
+        core_grant_allowance(&env, treasury_id, owner, admin, amount, token, period_seconds)
+    }
+
+    /// Treasury: emergency pause/unpause
+    pub fn emergency_pause(
+        env: Env,
+        treasury_id: u64,
+        signer: Address,
+        paused: bool,
+    ) -> bool {
+        core_emergency_pause(&env, treasury_id, signer, paused)
     }
 }
 
