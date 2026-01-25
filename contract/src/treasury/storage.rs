@@ -3,7 +3,7 @@ use soroban_sdk::{symbol_short, Address, Env, Map, String, Symbol, Vec};
 use crate::treasury::types::{Allowance, Budget, Transaction, Treasury};
 
 const TREASURY_CNT_KEY: Symbol = symbol_short!("t_cnt");
-const TREASURIES_KEY: Symbol = symbol_short!("treasuries");
+const TREASURIES_KEY: Symbol = symbol_short!("trsries");
 
 const TX_CNT_KEY: Symbol = symbol_short!("tx_cnt");
 const TRANSACTIONS_KEY: Symbol = symbol_short!("txs");
@@ -80,7 +80,9 @@ pub fn store_transaction(env: &Env, tx: &Transaction) {
     let mut list = index.get(tx.treasury_id).unwrap_or_else(|| Vec::new(env));
     list.push_back(tx.id);
     index.set(tx.treasury_id, list);
-    env.storage().persistent().set(&TREASURY_TX_INDEX_KEY, &index);
+    env.storage()
+        .persistent()
+        .set(&TREASURY_TX_INDEX_KEY, &index);
 }
 
 pub fn get_transaction(env: &Env, tx_id: u64) -> Option<Transaction> {
@@ -134,7 +136,10 @@ pub fn store_budget(env: &Env, budget: &Budget) {
         .get(&BUDGETS_KEY)
         .unwrap_or_else(|| Map::new(env));
 
-    budgets.set((budget.treasury_id, budget.category.clone()), budget.clone());
+    budgets.set(
+        (budget.treasury_id, budget.category.clone()),
+        budget.clone(),
+    );
     env.storage().persistent().set(&BUDGETS_KEY, &budgets);
 }
 
@@ -161,7 +166,11 @@ pub fn store_allowance(env: &Env, allowance: &Allowance) {
         .unwrap_or_else(|| Map::new(env));
 
     allowances.set(
-        (allowance.treasury_id, allowance.admin.clone(), allowance.token.clone()),
+        (
+            allowance.treasury_id,
+            allowance.admin.clone(),
+            allowance.token.clone(),
+        ),
         allowance.clone(),
     );
     env.storage().persistent().set(&ALLOWANCES_KEY, &allowances);

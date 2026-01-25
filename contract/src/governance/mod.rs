@@ -29,3 +29,6 @@ pub use voting::{
 };
 
 pub use execution::execute_proposal;
+
+#[cfg(test)]
+mod tests;

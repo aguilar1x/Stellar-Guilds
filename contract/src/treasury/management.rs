@@ -1,42 +1,49 @@
-use soroban_sdk::{token::Client as TokenClient, Address, Env, String, Vec};
+use soroban_sdk::{token::Client as TokenClient, Address, Env, String, Symbol, Vec};
 
-use crate::treasury::multisig::{add_approval, assert_signer, expire_if_needed, required_approvals_for_tx, validate_threshold, TX_EXPIRY_SECONDS};
-use crate::treasury::storage::{get_allowance, get_budget, get_next_treasury_id, get_next_tx_id, get_treasury, get_treasury_transactions, store_allowance, store_budget, store_transaction, store_treasury};
-use crate::treasury::types::{Allowance, Budget, DepositEvent, EmergencyPauseEvent, Transaction, TransactionApprovedEvent, TransactionExecutedEvent, TransactionStatus, TransactionType, Treasury, TreasuryInitializedEvent, WithdrawalProposedEvent};
+use crate::treasury::multisig::{
+    add_approval, assert_signer, expire_if_needed, required_approvals_for_tx, validate_threshold,
+    TX_EXPIRY_SECONDS,
+};
+use crate::treasury::storage::{
+    get_allowance, get_budget, get_next_treasury_id, get_next_tx_id, get_treasury,
+    get_treasury_transactions, store_allowance, store_budget, store_transaction, store_treasury,
+};
+use crate::treasury::types::{
+    Allowance, Budget, DepositEvent, EmergencyPauseEvent, Transaction, TransactionApprovedEvent,
+    TransactionExecutedEvent, TransactionStatus, TransactionType, Treasury,
+    TreasuryInitializedEvent, WithdrawalProposedEvent,
+};
 
 pub fn initialize_treasury(
     env: &Env,
     guild_id: u64,
-    owner: Address,
-    mut signers: Vec<Address>,
+    signers: Vec<Address>,
     approval_threshold: u32,
-    high_value_threshold: i128,
 ) -> u64 {
+    // First signer is the owner
+    let owner = signers.get(0).expect("at least one signer required");
     owner.require_auth();
 
-    // ensure owner is a signer
-    if !signers.iter().any(|a| a == &owner) {
-        signers.push_back(owner.clone());
-    }
-
-    // deduplicate signers
-    let mut unique: Vec<Address> = Vec::new(env);
+    let mut unique_signers = Vec::new(env);
     for addr in signers.iter() {
-        if !unique.iter().any(|a| a == &addr) {
-            unique.push_back(addr);
+        if !unique_signers.iter().any(|a| a == addr.clone()) {
+            unique_signers.push_back(addr);
         }
     }
 
-    let signers_len = unique.len() as u32;
+    let signers_len = unique_signers.len() as u32;
     validate_threshold(signers_len, approval_threshold);
 
     let id = get_next_treasury_id(env);
+
+    // Default high value threshold to a reasonable amount (1000 XLM)
+    let high_value_threshold = 1000i128;
 
     let treasury = Treasury {
         id,
         guild_id,
         owner: owner.clone(),
-        signers: unique,
+        signers: unique_signers,
         approval_threshold,
         high_value_threshold,
         balance_xlm: 0,
@@ -53,7 +60,10 @@ pub fn initialize_treasury(
         guild_id,
         owner,
     };
-    env.events().publish((b"treasury", b"init"), event);
+    env.events().publish(
+        (Symbol::new(env, "treasury"), Symbol::new(env, "init")),
+        event,
+    );
 
     id
 }
@@ -81,7 +91,7 @@ pub fn deposit(
             client.transfer(&depositor, &env.current_contract_address(), &amount);
 
             let mut balances = treasury.token_balances.clone();
-            let current = balances.get(token_addr).unwrap_or(0i128);
+            let current = balances.get(token_addr.clone()).unwrap_or(0i128);
             balances.set(token_addr.clone(), current + amount);
             treasury.token_balances = balances;
         }
@@ -118,7 +128,10 @@ pub fn deposit(
         amount,
         token,
     };
-    env.events().publish((b"treasury", b"deposit"), event);
+    env.events().publish(
+        (Symbol::new(env, "treasury"), Symbol::new(env, "deposit")),
+        event,
+    );
 
     true
 }
@@ -172,7 +185,10 @@ pub fn propose_withdrawal(
         amount,
         token,
     };
-    env.events().publish((b"treasury", b"withdraw_proposed"), event);
+    env.events().publish(
+        (Symbol::new(env, "treasury"), Symbol::new(env, "withdraw")),
+        event,
+    );
 
     tx_id
 }
@@ -185,7 +201,10 @@ pub fn approve_transaction(env: &Env, tx_id: u64, approver: Address) -> bool {
 
     let now = env.ledger().timestamp();
     expire_if_needed(&mut tx, now);
-    if matches!(tx.status, TransactionStatus::Rejected | TransactionStatus::Executed | TransactionStatus::Expired) {
+    if matches!(
+        tx.status,
+        TransactionStatus::Rejected | TransactionStatus::Executed | TransactionStatus::Expired
+    ) {
         panic!("transaction not approvable");
     }
 
@@ -204,7 +223,10 @@ pub fn approve_transaction(env: &Env, tx_id: u64, approver: Address) -> bool {
         tx_id,
         approver,
     };
-    env.events().publish((b"treasury", b"tx_approved"), event);
+    env.events().publish(
+        (Symbol::new(env, "treasury"), Symbol::new(env, "tx_approv")),
+        event,
+    );
 
     true
 }
@@ -223,16 +245,13 @@ fn enforce_budget(env: &Env, treasury_id: u64, category: &String, amount: i128) 
         period_start: now,
     });
 
-    if budget.period_seconds > 0
-        && now >= budget.period_start.saturating_add(budget.period_seconds)
+    if budget.period_seconds > 0 && now >= budget.period_start.saturating_add(budget.period_seconds)
     {
         budget.period_start = now;
         budget.spent_amount = 0;
     }
 
-    if budget.allocated_amount > 0
-        && budget.spent_amount + amount > budget.allocated_amount
-    {
+    if budget.allocated_amount > 0 && budget.spent_amount + amount > budget.allocated_amount {
         panic!("budget exceeded");
     }
 
@@ -240,7 +259,13 @@ fn enforce_budget(env: &Env, treasury_id: u64, category: &String, amount: i128) 
     store_budget(env, &budget);
 }
 
-fn enforce_allowance(env: &Env, treasury_id: u64, admin: &Address, token: &Option<Address>, amount: i128) {
+fn enforce_allowance(
+    env: &Env,
+    treasury_id: u64,
+    admin: &Address,
+    token: &Option<Address>,
+    amount: i128,
+) {
     if amount <= 0 {
         return;
     }
@@ -263,7 +288,10 @@ pub fn execute_transaction(env: &Env, tx_id: u64, executor: Address) -> bool {
 
     let now = env.ledger().timestamp();
     expire_if_needed(&mut tx, now);
-    if matches!(tx.status, TransactionStatus::Rejected | TransactionStatus::Executed | TransactionStatus::Expired) {
+    if matches!(
+        tx.status,
+        TransactionStatus::Rejected | TransactionStatus::Executed | TransactionStatus::Expired
+    ) {
         panic!("transaction not executable");
     }
 
@@ -301,7 +329,7 @@ pub fn execute_transaction(env: &Env, tx_id: u64, executor: Address) -> bool {
                     let client = TokenClient::new(env, token_addr);
 
                     let mut balances = treasury.token_balances.clone();
-                    let current = balances.get(token_addr).unwrap_or(0i128);
+                    let current = balances.get(token_addr.clone()).unwrap_or(0i128);
                     if current < tx.amount {
                         panic!("insufficient treasury balance");
                     }
@@ -336,7 +364,13 @@ pub fn execute_transaction(env: &Env, tx_id: u64, executor: Address) -> bool {
         treasury_id: tx.treasury_id,
         tx_id,
     };
-    env.events().publish((b"treasury", b"tx_executed"), event);
+    env.events().publish(
+        (
+            Symbol::new(env, "treasury"),
+            Symbol::new(env, "tx_executed"),
+        ),
+        event,
+    );
 
     true
 }
@@ -372,7 +406,7 @@ pub fn execute_milestone_payment(
             let client = TokenClient::new(env, token_addr);
 
             let mut balances = treasury.token_balances.clone();
-            let current = balances.get(token_addr).unwrap_or(0i128);
+            let current = balances.get(token_addr.clone()).unwrap_or(0i128);
             if current < amount {
                 panic!("insufficient treasury balance");
             }
@@ -411,11 +445,14 @@ pub fn execute_milestone_payment(
     };
     store_transaction(env, &tx);
 
-    let event = TransactionExecutedEvent {
-        treasury_id,
-        tx_id,
-    };
-    env.events().publish((b"treasury", b"tx_executed"), event);
+    let event = TransactionExecutedEvent { treasury_id, tx_id };
+    env.events().publish(
+        (
+            Symbol::new(env, "treasury"),
+            Symbol::new(env, "tx_executed"),
+        ),
+        event,
+    );
 
     true
 }
@@ -459,7 +496,10 @@ pub fn set_budget(
         allocated_amount: amount,
         period_seconds,
     };
-    env.events().publish((b"treasury", b"budget"), event);
+    env.events().publish(
+        (Symbol::new(env, "treasury"), Symbol::new(env, "budget")),
+        event,
+    );
 
     true
 }
@@ -469,7 +509,7 @@ pub fn get_balance(env: &Env, treasury_id: u64, token: Option<Address>) -> i128 
     match token {
         Some(token_addr) => treasury
             .token_balances
-            .get(token_addr)
+            .get(token_addr.clone())
             .unwrap_or(0i128),
         None => treasury.balance_xlm,
     }
@@ -478,16 +518,15 @@ pub fn get_balance(env: &Env, treasury_id: u64, token: Option<Address>) -> i128 
 pub fn get_transaction_history(env: &Env, treasury_id: u64, limit: u32) -> Vec<Transaction> {
     let all = get_treasury_transactions(env, treasury_id);
     let len = all.len();
-    let limit_usize = limit as usize;
 
-    if len <= limit_usize {
+    if len <= limit {
         return all;
     }
 
-    let start = len - limit_usize;
+    let start = len.checked_sub(limit).unwrap_or(0);
     let mut result = Vec::new(env);
     for (idx, tx) in all.iter().enumerate() {
-        if idx >= start {
+        if (idx as u32) >= start {
             result.push_back(tx);
         }
     }
@@ -539,7 +578,10 @@ pub fn grant_allowance(
         amount_per_period: amount,
         period_seconds,
     };
-    env.events().publish((b"treasury", b"allow"), event);
+    env.events().publish(
+        (Symbol::new(env, "treasury"), Symbol::new(env, "allow")),
+        event,
+    );
 
     true
 }
@@ -555,7 +597,10 @@ pub fn emergency_pause(env: &Env, treasury_id: u64, signer: Address, paused: boo
         treasury_id,
         paused,
     };
-    env.events().publish((b"treasury", b"pause"), event);
+    env.events().publish(
+        (Symbol::new(env, "treasury"), Symbol::new(env, "pause")),
+        event,
+    );
 
     true
 }

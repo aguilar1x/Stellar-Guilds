@@ -1,4 +1,4 @@
-use soroban_sdk::{Env, Address, String, Vec};
+use soroban_sdk::{Address, Env, String, Vec};
 
 use crate::guild::membership::has_permission;
 use crate::guild::types::Role;
@@ -8,7 +8,7 @@ use crate::milestone::storage::{
 };
 use crate::milestone::types::{
     Milestone, MilestoneAddedEvent, MilestoneInput, MilestonePaymentReleasedEvent,
-    MilestoneStatus, MilestoneStatusChangedEvent, MilestoneSubmittedEvent,
+    MilestoneRejectedEvent, MilestoneStatus, MilestoneStatusChangedEvent, MilestoneSubmittedEvent,
     Project, ProjectCreatedEvent, ProjectStatus, ProjectStatusChangedEvent,
 };
 use crate::treasury::execute_milestone_payment;
@@ -69,7 +69,9 @@ pub fn create_project(
         if input.deadline <= now {
             panic!("milestone deadline must be in the future");
         }
-        allocated = allocated.checked_add(input.payment_amount).expect("overflow");
+        allocated = allocated
+            .checked_add(input.payment_amount)
+            .expect("overflow");
     }
 
     if allocated > total_amount {
@@ -308,7 +310,8 @@ pub fn submit_milestone(env: &Env, milestone_id: u64, proof_url: String) -> bool
         old_status,
         new_status: milestone.status.clone(),
     };
-    env.events().publish(("MilestoneStatusChanged",), status_event);
+    env.events()
+        .publish(("MilestoneStatusChanged",), status_event);
 
     true
 }
@@ -341,7 +344,8 @@ pub fn approve_milestone(env: &Env, milestone_id: u64, approver: Address) -> boo
         old_status,
         new_status: milestone.status.clone(),
     };
-    env.events().publish(("MilestoneStatusChanged",), status_event);
+    env.events()
+        .publish(("MilestoneStatusChanged",), status_event);
 
     // Automatic payment release (Option B via treasury)
     let _ = release_milestone_payment_internal(env, &mut project, &mut milestone);
@@ -349,12 +353,7 @@ pub fn approve_milestone(env: &Env, milestone_id: u64, approver: Address) -> boo
     true
 }
 
-pub fn reject_milestone(
-    env: &Env,
-    milestone_id: u64,
-    approver: Address,
-    reason: String,
-) -> bool {
+pub fn reject_milestone(env: &Env, milestone_id: u64, approver: Address, reason: String) -> bool {
     approver.require_auth();
 
     let mut milestone = get_milestone(env, milestone_id).expect("milestone not found");
@@ -393,7 +392,8 @@ pub fn reject_milestone(
         old_status,
         new_status: milestone.status.clone(),
     };
-    env.events().publish(("MilestoneStatusChanged",), status_event);
+    env.events()
+        .publish(("MilestoneStatusChanged",), status_event);
 
     true
 }

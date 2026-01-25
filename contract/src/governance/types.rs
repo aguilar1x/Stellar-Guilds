@@ -52,30 +52,58 @@ impl GovernanceConfig {
     }
 }
 
+/// Simple execution payload for Soroban compatibility.
+/// Complex payloads are stored as serialized strings or handled externally.
 #[contracttype]
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum ExecutionPayload {
-    TreasurySpend {
-        treasury_id: u64,
-        amount: i128,
-        token: Option<Address>,
-        recipient: Address,
-        reason: String,
-    },
-    AddMember {
-        address: Address,
-        role: Role,
-    },
-    RemoveMember {
-        address: Address,
-    },
-    RuleChange {
-        key: String,
-        value: String,
-    },
-    GeneralDecision {
-        meta: String,
-    },
+    /// Treasury spend: (treasury_id, amount, recipient_str, reason)
+    TreasurySpend,
+    /// Add member to guild
+    AddMember,
+    /// Remove member from guild
+    RemoveMember,
+    /// Change a guild rule
+    RuleChange,
+    /// General decision (signalling only)
+    GeneralDecision,
+}
+
+/// Detailed payload data stored separately for complex operations
+#[contracttype]
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct TreasurySpendData {
+    pub treasury_id: u64,
+    pub amount: i128,
+    pub token: Option<Address>,
+    pub recipient: Address,
+    pub reason: String,
+}
+
+#[contracttype]
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct AddMemberData {
+    pub address: Address,
+    pub role: Role,
+}
+
+#[contracttype]
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct RemoveMemberData {
+    pub address: Address,
+}
+
+#[contracttype]
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct RuleChangeData {
+    pub key: String,
+    pub value: String,
+}
+
+#[contracttype]
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct GeneralDecisionData {
+    pub meta: String,
 }
 
 #[contracttype]

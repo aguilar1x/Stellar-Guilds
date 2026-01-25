@@ -25,7 +25,7 @@ pub fn assert_signer(env: &Env, treasury: &Treasury, addr: &Address) {
 }
 
 pub fn has_approved(tx: &Transaction, addr: &Address) -> bool {
-    tx.approvals.iter().any(|a| a == addr)
+    tx.approvals.iter().any(|a| a == addr.clone())
 }
 
 pub fn add_approval(tx: &mut Transaction, addr: &Address) {
@@ -37,7 +37,9 @@ pub fn add_approval(tx: &mut Transaction, addr: &Address) {
 
 pub fn required_approvals_for_tx(treasury: &Treasury, tx: &Transaction) -> u32 {
     match tx.tx_type {
-        TransactionType::Withdrawal | TransactionType::BountyFunding | TransactionType::MilestonePayment => {
+        TransactionType::Withdrawal
+        | TransactionType::BountyFunding
+        | TransactionType::MilestonePayment => {
             if tx.amount >= treasury.high_value_threshold {
                 treasury.approval_threshold
             } else {
@@ -54,8 +56,10 @@ pub fn is_expired(tx: &Transaction, now: u64) -> bool {
 }
 
 pub fn expire_if_needed(tx: &mut Transaction, now: u64) {
-    if matches!(tx.status, TransactionStatus::Pending | TransactionStatus::Approved)
-        && is_expired(tx, now)
+    if matches!(
+        tx.status,
+        TransactionStatus::Pending | TransactionStatus::Approved
+    ) && is_expired(tx, now)
     {
         tx.status = TransactionStatus::Expired;
     }

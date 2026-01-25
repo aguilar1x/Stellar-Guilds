@@ -37,8 +37,87 @@ pub struct Bounty {
     pub status: BountyStatus,
     /// Address of the contributor who claimed the bounty (optional)
     pub claimer: Option<Address>,
+    /// Submission URL when work is submitted
+    pub submission_url: Option<String>,
     /// Creation timestamp (seconds)
     pub created_at: u64,
     /// Expiration timestamp (seconds)
     pub expires_at: u64,
+}
+
+// ============ Events ============
+
+/// Event emitted when a bounty is created
+#[contracttype]
+#[derive(Clone, Debug)]
+pub struct BountyCreatedEvent {
+    pub bounty_id: u64,
+    pub guild_id: u64,
+    pub creator: Address,
+    pub reward_amount: i128,
+    pub token: Address,
+    pub expires_at: u64,
+}
+
+/// Event emitted when a bounty is funded
+#[contracttype]
+#[derive(Clone, Debug)]
+pub struct BountyFundedEvent {
+    pub bounty_id: u64,
+    pub funder: Address,
+    pub amount: i128,
+    pub total_funded: i128,
+    pub is_fully_funded: bool,
+}
+
+/// Event emitted when a bounty is claimed
+#[contracttype]
+#[derive(Clone, Debug)]
+pub struct BountyClaimedEvent {
+    pub bounty_id: u64,
+    pub claimer: Address,
+}
+
+/// Event emitted when work is submitted
+#[contracttype]
+#[derive(Clone, Debug)]
+pub struct WorkSubmittedEvent {
+    pub bounty_id: u64,
+    pub claimer: Address,
+    pub submission_url: String,
+}
+
+/// Event emitted when work is approved
+#[contracttype]
+#[derive(Clone, Debug)]
+pub struct BountyApprovedEvent {
+    pub bounty_id: u64,
+    pub approver: Address,
+}
+
+/// Event emitted when escrow is released
+#[contracttype]
+#[derive(Clone, Debug)]
+pub struct EscrowReleasedEvent {
+    pub bounty_id: u64,
+    pub recipient: Address,
+    pub amount: i128,
+    pub token: Address,
+}
+
+/// Event emitted when a bounty is cancelled
+#[contracttype]
+#[derive(Clone, Debug)]
+pub struct BountyCancelledEvent {
+    pub bounty_id: u64,
+    pub canceller: Address,
+    pub refund_amount: i128,
+    pub refund_recipient: Address,
+}
+
+/// Event emitted when a bounty expires
+#[contracttype]
+#[derive(Clone, Debug)]
+pub struct BountyExpiredEvent {
+    pub bounty_id: u64,
 }

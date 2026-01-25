@@ -149,7 +149,7 @@ pub struct EmergencyPauseEvent {
 
 impl Treasury {
     pub fn is_signer(&self, addr: &Address) -> bool {
-        self.signers.iter().any(|a| a == addr)
+        self.signers.iter().any(|a| &a == addr)
     }
 }
 

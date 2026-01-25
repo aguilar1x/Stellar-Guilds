@@ -27,3 +27,6 @@ pub use types::{
     TransactionType,
     Treasury,
 };
+// Tests disabled pending fixes
+#[cfg(test)]
+mod tests;

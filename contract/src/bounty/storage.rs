@@ -4,13 +4,12 @@ use soroban_sdk::{symbol_short, Env, Map, Symbol, Vec};
 // Storage keys
 const BOUNTIES_KEY: Symbol = symbol_short!("bounties");
 const BOUNTY_CNT_KEY: Symbol = symbol_short!("b_cnt");
-const GUILD_BOUNTIES_KEY: Symbol = symbol_short!("g_bounties");
+const GUILD_BOUNTIES_KEY: Symbol = symbol_short!("g_bnties");
 
 /// Initialize bounty storage
 pub fn initialize(env: &Env) {
     if !env.storage().persistent().has(&BOUNTY_CNT_KEY) {
         env.storage().persistent().set(&BOUNTY_CNT_KEY, &0u64);
-        initialize_milestone_storage(&env);
     }
 }
 
@@ -52,10 +51,12 @@ pub fn store_bounty(env: &Env, bounty: &Bounty) {
         let mut list = guild_bounties
             .get(bounty.guild_id)
             .unwrap_or_else(|| Vec::new(env));
-        
+
         list.push_back(bounty.id);
         guild_bounties.set(bounty.guild_id, list);
-        env.storage().persistent().set(&GUILD_BOUNTIES_KEY, &guild_bounties);
+        env.storage()
+            .persistent()
+            .set(&GUILD_BOUNTIES_KEY, &guild_bounties);
     }
 }
 
@@ -96,109 +97,3 @@ pub fn get_guild_bounties(env: &Env, guild_id: u64) -> Vec<Bounty> {
     }
     result
 }
-
-    // ============ Milestone Functions ============
-
-    /// Create a new milestone-based project.
-    ///
-    /// Extended signature:
-    /// - `treasury_id`: treasury to fund milestone payments from
-    /// - `token`: asset used for payments (None for XLM-style)
-    /// - `is_sequential`: true = milestones must be completed in order
-    pub fn create_project(
-        env: Env,
-        guild_id: u64,
-        contributor: Address,
-        milestones: Vec<MilestoneInput>,
-        total_amount: i128,
-        treasury_id: u64,
-        token: Option<Address>,
-        is_sequential: bool,
-    ) -> u64 {
-        milestone_create_project(
-            &env,
-            guild_id,
-            contributor,
-            milestones,
-            total_amount,
-            treasury_id,
-            token,
-            is_sequential,
-        )
-    }
-
-    /// Add a milestone to an existing project (guild admin only).
-    pub fn add_milestone(
-        env: Env,
-        project_id: u64,
-        title: String,
-        description: String,
-        amount: i128,
-        deadline: u64,
-        caller: Address,
-    ) -> u64 {
-        milestone_add_milestone(
-            &env,
-            project_id,
-            title,
-            description,
-            amount,
-            deadline,
-            caller,
-        )
-    }
-
-    /// Start work on a milestone (project contributor only).
-    pub fn start_milestone(env: Env, milestone_id: u64, contributor: Address) -> bool {
-        milestone_start_milestone(&env, milestone_id, contributor)
-    }
-
-    /// Submit proof of work for a milestone.
-    pub fn submit_milestone(env: Env, milestone_id: u64, proof_url: String) -> bool {
-        milestone_submit_milestone(&env, milestone_id, proof_url)
-    }
-
-    /// Approve a submitted milestone (guild admin only).
-    pub fn approve_milestone(env: Env, milestone_id: u64, approver: Address) -> bool {
-        milestone_approve_milestone(&env, milestone_id, approver)
-    }
-
-    /// Reject a submitted milestone with a reason (guild admin only).
-    pub fn reject_milestone(
-        env: Env,
-        milestone_id: u64,
-        approver: Address,
-        reason: String,
-    ) -> bool {
-        milestone_reject_milestone(&env, milestone_id, approver, reason)
-    }
-
-    /// Get project progress as (completed_milestones, total_milestones, percentage).
-    pub fn get_project_progress(env: Env, project_id: u64) -> (u32, u32, u32) {
-        milestone_get_project_progress(&env, project_id)
-    }
-
-    /// Get a milestone by ID.
-    pub fn get_milestone(env: Env, milestone_id: u64) -> Milestone {
-        milestone_get_milestone(&env, milestone_id)
-    }
-
-    /// Release payment for an approved milestone.
-    pub fn release_milestone_payment(env: Env, milestone_id: u64) -> bool {
-        milestone_release_milestone_payment(&env, milestone_id)
-    }
-
-    /// Extend a milestone deadline (guild admin only).
-    pub fn extend_milestone_deadline(
-        env: Env,
-        milestone_id: u64,
-        new_deadline: u64,
-        caller: Address,
-    ) -> bool {
-        milestone_extend_milestone_deadline(&env, milestone_id, new_deadline, caller)
-    }
-
-    /// Cancel a project (guild admin only).
-    pub fn cancel_project(env: Env, project_id: u64, caller: Address) -> bool {
-        milestone_cancel_project(&env, project_id, caller)
-    }

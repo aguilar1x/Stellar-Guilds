@@ -1,3 +1,5 @@
+pub mod distribution;
+pub mod storage;
 /// Payment distribution module
 ///
 /// This module provides automated payment splitting functionality for the Stellar Guilds platform.
@@ -19,15 +21,15 @@
 /// - Dust amount protection
 /// - Comprehensive validation
 /// - Event emission for transparency
-
 pub mod types;
-pub mod storage;
-pub mod distribution;
 
 // Re-export main functions for convenience
 pub use distribution::{
-    create_payment_pool, add_recipient, validate_distribution, execute_distribution,
-    get_recipient_amount, cancel_distribution, get_pool_status, batch_distribute,
+    add_recipient, batch_distribute, cancel_distribution, create_payment_pool,
+    execute_distribution, get_pool_status, get_recipient_amount, validate_distribution,
 };
-pub use types::{PaymentPool, Recipient, DistributionRule, DistributionStatus};
-pub use storage::{initialize_payment_storage};
+// pub use storage::initialize_payment_storage;
+pub use types::{DistributionRule, DistributionStatus};
+
+#[cfg(test)]
+mod tests;

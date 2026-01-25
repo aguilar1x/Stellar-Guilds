@@ -1,9 +1,11 @@
 use crate::guild::storage;
-use crate::guild::types::{Guild, Member, Role, GuildCreatedEvent, MemberAddedEvent, MemberRemovedEvent, RoleUpdatedEvent};
+use crate::guild::types::{
+    Guild, GuildCreatedEvent, Member, MemberAddedEvent, MemberRemovedEvent, Role, RoleUpdatedEvent,
+};
 use soroban_sdk::{Address, Env, String, Symbol, Vec};
 
 /// Create a new guild
-/// 
+///
 /// # Arguments
 /// * `env` - The contract environment
 /// * `name` - The name of the guild
@@ -24,10 +26,16 @@ pub fn create_guild(
 ) -> Result<u64, String> {
     // Validate inputs
     if name.len() == 0 || name.len() > 256 {
-        return Err(String::from_str(env, "Guild name must be between 1 and 256 characters"));
+        return Err(String::from_str(
+            env,
+            "Guild name must be between 1 and 256 characters",
+        ));
     }
     if description.len() > 512 {
-        return Err(String::from_str(env, "Guild description must be at most 512 characters"));
+        return Err(String::from_str(
+            env,
+            "Guild description must be at most 512 characters",
+        ));
     }
 
     // Get next guild ID
@@ -97,8 +105,8 @@ pub fn add_member(
     caller: Address,
 ) -> Result<bool, String> {
     // Get the guild
-    let guild = storage::get_guild(env, guild_id)
-        .ok_or(String::from_str(env, "Guild not found"))?;
+    let guild =
+        storage::get_guild(env, guild_id).ok_or(String::from_str(env, "Guild not found"))?;
 
     // Check if member already exists
     if storage::has_member(env, guild_id, &address) {
@@ -126,7 +134,10 @@ pub fn add_member(
         Role::Member | Role::Contributor => {
             // Owner and Admin can add members and contributors
             if !caller_member.role.has_permission(&Role::Member) {
-                return Err(String::from_str(env, "Insufficient permissions to add members"));
+                return Err(String::from_str(
+                    env,
+                    "Insufficient permissions to add members",
+                ));
             }
         }
     }
@@ -183,8 +194,8 @@ pub fn remove_member(
     caller: Address,
 ) -> Result<bool, String> {
     // Get the guild
-    let guild = storage::get_guild(env, guild_id)
-        .ok_or(String::from_str(env, "Guild not found"))?;
+    let guild =
+        storage::get_guild(env, guild_id).ok_or(String::from_str(env, "Guild not found"))?;
 
     // Check if member exists
     let member = storage::get_member(env, guild_id, &address)
@@ -192,6 +203,14 @@ pub fn remove_member(
 
     // Check if caller is trying to remove themselves (self-removal is allowed)
     let is_self_removal = caller == address;
+
+    // Special case: cannot remove the last owner even via self-removal
+    if member.role == Role::Owner {
+        let owner_count = storage::count_owners(env, guild_id);
+        if owner_count <= 1 {
+            return Err(String::from_str(env, "Cannot remove the last owner"));
+        }
+    }
 
     if !is_self_removal {
         // Get caller's role
@@ -214,13 +233,19 @@ pub fn remove_member(
             Role::Admin => {
                 // Only owner and admin can remove admins
                 if caller_member.role != Role::Owner && caller_member.role != Role::Admin {
-                    return Err(String::from_str(env, "Only owner or admin can remove admins"));
+                    return Err(String::from_str(
+                        env,
+                        "Only owner or admin can remove admins",
+                    ));
                 }
             }
             Role::Member | Role::Contributor => {
                 // Owner and Admin can remove members and contributors
                 if !caller_member.role.has_permission(&Role::Member) {
-                    return Err(String::from_str(env, "Insufficient permissions to remove members"));
+                    return Err(String::from_str(
+                        env,
+                        "Insufficient permissions to remove members",
+                    ));
                 }
             }
         }
@@ -237,10 +262,7 @@ pub fn remove_member(
     // Emit event
     env.events().publish(
         (Symbol::new(env, "member_removed"), Symbol::new(env, "v0")),
-        MemberRemovedEvent {
-            guild_id,
-            address,
-        },
+        MemberRemovedEvent { guild_id, address },
     );
 
     Ok(true)
@@ -272,8 +294,8 @@ pub fn update_role(
     caller: Address,
 ) -> Result<bool, String> {
     // Get the guild
-    let _guild = storage::get_guild(env, guild_id)
-        .ok_or(String::from_str(env, "Guild not found"))?;
+    let _guild =
+        storage::get_guild(env, guild_id).ok_or(String::from_str(env, "Guild not found"))?;
 
     // Get the member
     let member = storage::get_member(env, guild_id, &address)
@@ -301,13 +323,19 @@ pub fn update_role(
         Role::Admin => {
             // Only owner and admin can change admin roles
             if caller_member.role != Role::Owner && caller_member.role != Role::Admin {
-                return Err(String::from_str(env, "Only owner or admin can change admin role"));
+                return Err(String::from_str(
+                    env,
+                    "Only owner or admin can change admin role",
+                ));
             }
         }
         Role::Member | Role::Contributor => {
-            // Owner and Admin can change member/contributor roles
-            if !caller_member.role.has_permission(&Role::Member) {
-                return Err(String::from_str(env, "Insufficient permissions to change member role"));
+            // Only Owner and Admin can change member/contributor roles
+            if caller_member.role != Role::Owner && caller_member.role != Role::Admin {
+                return Err(String::from_str(
+                    env,
+                    "Insufficient permissions to change member role",
+                ));
             }
         }
     }
@@ -345,13 +373,8 @@ pub fn update_role(
 ///
 /// # Returns
 /// The Member if found, error string if not
-pub fn get_member(
-    env: &Env,
-    guild_id: u64,
-    address: Address,
-) -> Result<Member, String> {
-    storage::get_member(env, guild_id, &address)
-        .ok_or(String::from_str(env, "Member not found"))
+pub fn get_member(env: &Env, guild_id: u64, address: Address) -> Result<Member, String> {
+    storage::get_member(env, guild_id, &address).ok_or(String::from_str(env, "Member not found"))
 }
 
 /// Get all members of a guild
@@ -389,12 +412,7 @@ pub fn is_member(env: &Env, guild_id: u64, address: Address) -> bool {
 ///
 /// # Returns
 /// True if the member has the required permission, false otherwise
-pub fn has_permission(
-    env: &Env,
-    guild_id: u64,
-    address: Address,
-    required_role: Role,
-) -> bool {
+pub fn has_permission(env: &Env, guild_id: u64, address: Address, required_role: Role) -> bool {
     if let Some(member) = storage::get_member(env, guild_id, &address) {
         member.role.has_permission(&required_role)
     } else {

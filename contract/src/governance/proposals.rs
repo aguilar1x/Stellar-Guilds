@@ -1,7 +1,13 @@
 use soroban_sdk::{Address, Env, String, Symbol, Vec};
 
-use crate::governance::storage::{get_config, get_next_proposal_id, get_guild_proposals, get_proposal as load_proposal, set_config, store_proposal};
-use crate::governance::types::{ExecutionPayload, GovernanceConfig, Proposal, ProposalCreatedEvent, ProposalStatus, ProposalType, GovernanceConfigUpdatedEvent};
+use crate::governance::storage::{
+    get_config, get_guild_proposals, get_next_proposal_id, get_proposal as load_proposal,
+    set_config, store_proposal,
+};
+use crate::governance::types::{
+    ExecutionPayload, GovernanceConfig, GovernanceConfigUpdatedEvent, Proposal,
+    ProposalCreatedEvent, ProposalStatus, ProposalType,
+};
 use crate::guild::storage as guild_storage;
 use crate::guild::types::Member;
 
@@ -14,28 +20,21 @@ fn validate_execution_payload(
     proposal_type: &ProposalType,
     payload: &ExecutionPayload,
 ) {
+    // Validate that payload type matches proposal type
     match (proposal_type, payload) {
-        (ProposalType::TreasurySpend, ExecutionPayload::TreasurySpend { amount, .. }) => {
-            if *amount <= 0 {
-                panic!("treasury spend amount must be positive");
-            }
-        }
-        (ProposalType::AddMember, ExecutionPayload::AddMember { .. }) => {}
-        (ProposalType::RemoveMember, ExecutionPayload::RemoveMember { .. }) => {}
-        (ProposalType::RuleChange, ExecutionPayload::RuleChange { key, .. }) => {
-            if key.len() == 0 {
-                panic!("rule change key must not be empty");
-            }
-        }
-        (ProposalType::GeneralDecision, ExecutionPayload::GeneralDecision { .. }) => {}
+        (ProposalType::TreasurySpend, ExecutionPayload::TreasurySpend) => {}
+        (ProposalType::AddMember, ExecutionPayload::AddMember) => {}
+        (ProposalType::RemoveMember, ExecutionPayload::RemoveMember) => {}
+        (ProposalType::RuleChange, ExecutionPayload::RuleChange) => {}
+        (ProposalType::GeneralDecision, ExecutionPayload::GeneralDecision) => {}
         _ => {
             panic!("execution payload does not match proposal type");
         }
     }
 
     // Ensure guild exists
-    let _guild = guild_storage::get_guild(env, guild_id)
-        .unwrap_or_else(|| panic!("guild not found"));
+    let _guild =
+        guild_storage::get_guild(env, guild_id).unwrap_or_else(|| panic!("guild not found"));
 }
 
 fn get_member(env: &Env, guild_id: u64, address: &Address) -> Option<Member> {
@@ -113,7 +112,10 @@ pub fn create_proposal(
     };
 
     env.events().publish(
-        (Symbol::new(env, EVENT_TOPIC_PROPOSAL_CREATED), Symbol::new(env, "v0")),
+        (
+            Symbol::new(env, EVENT_TOPIC_PROPOSAL_CREATED),
+            Symbol::new(env, "v0"),
+        ),
         event,
     );
 
@@ -123,9 +125,13 @@ pub fn create_proposal(
 pub fn cancel_proposal(env: &Env, proposal_id: u64, canceller: Address) -> bool {
     canceller.require_auth();
 
-    let mut proposal = load_proposal(env, proposal_id).unwrap_or_else(|| panic!("proposal not found"));
+    let mut proposal =
+        load_proposal(env, proposal_id).unwrap_or_else(|| panic!("proposal not found"));
 
-    if !matches!(proposal.status, ProposalStatus::Active | ProposalStatus::Draft) {
+    if !matches!(
+        proposal.status,
+        ProposalStatus::Active | ProposalStatus::Draft
+    ) {
         panic!("only active or draft proposals can be cancelled");
     }
 
@@ -142,7 +148,10 @@ pub fn cancel_proposal(env: &Env, proposal_id: u64, canceller: Address) -> bool 
 
     let event = crate::governance::types::ProposalCancelledEvent { proposal_id };
     env.events().publish(
-        (Symbol::new(env, "proposal_cancelled"), Symbol::new(env, "v0")),
+        (
+            Symbol::new(env, "proposal_cancelled"),
+            Symbol::new(env, "v0"),
+        ),
         event,
     );
 
@@ -164,10 +173,15 @@ pub fn get_active_proposals(env: &Env, guild_id: u64) -> Vec<Proposal> {
     active
 }
 
-pub fn update_governance_config(env: &Env, guild_id: u64, caller: Address, config: GovernanceConfig) -> bool {
+pub fn update_governance_config(
+    env: &Env,
+    guild_id: u64,
+    caller: Address,
+    config: GovernanceConfig,
+) -> bool {
     // only guild owner can update config
-    let guild = guild_storage::get_guild(env, guild_id)
-        .unwrap_or_else(|| panic!("guild not found"));
+    let guild =
+        guild_storage::get_guild(env, guild_id).unwrap_or_else(|| panic!("guild not found"));
 
     if caller != guild.owner {
         panic!("only guild owner can update governance config");
@@ -185,7 +199,10 @@ pub fn update_governance_config(env: &Env, guild_id: u64, caller: Address, confi
 
     let event = GovernanceConfigUpdatedEvent { guild_id };
     env.events().publish(
-        (Symbol::new(env, EVENT_TOPIC_CONFIG_UPDATED), Symbol::new(env, "v0")),
+        (
+            Symbol::new(env, EVENT_TOPIC_CONFIG_UPDATED),
+            Symbol::new(env, "v0"),
+        ),
         event,
     );
 
