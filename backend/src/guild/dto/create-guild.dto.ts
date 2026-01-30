@@ -1,4 +1,4 @@
-import { IsString, IsOptional, MaxLength } from 'class-validator';
+import { IsString, IsOptional, MaxLength, IsObject } from 'class-validator';
 
 export class CreateGuildDto {
   @IsString()
@@ -14,4 +14,8 @@ export class CreateGuildDto {
   @IsString()
   @MaxLength(1000)
   description?: string;
+
+  @IsOptional()
+  @IsObject()
+  settings?: any;
 }

@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException, ForbiddenException, BadRequestException, ConflictException, InternalServerErrorException } from '@nestjs/common';
+import { validateAndNormalizeSettings } from './guild.settings';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateGuildDto } from './dto/create-guild.dto';
 import { UpdateGuildDto } from './dto/update-guild.dto';
@@ -24,6 +25,8 @@ export class GuildService {
     const existing = await this.prisma.guild.findUnique({ where: { slug } });
     if (existing) throw new ConflictException('Slug already in use');
 
+    const normalizedSettings = validateAndNormalizeSettings((dto as any).settings);
+
     let guild;
     try {
       guild = await this.prisma.guild.create({
@@ -32,6 +35,7 @@ export class GuildService {
           slug,
           description: dto.description,
           ownerId,
+          settings: normalizedSettings,
         },
       });
     } catch (err: any) {
@@ -88,7 +92,15 @@ export class GuildService {
 
   async updateGuild(guildId: string, dto: UpdateGuildDto, userId: string) {
     await this.ensureManagePermission(guildId, userId);
-    return this.prisma.guild.update({ where: { id: guildId }, data: dto });
+    // If settings present, validate and merge with existing
+    const data: any = { ...dto };
+    if ((dto as any).settings) {
+      const existing = await this.prisma.guild.findUnique({ where: { id: guildId } });
+      const validated = validateAndNormalizeSettings((dto as any).settings);
+      data.settings = { ...existing.settings, ...validated };
+    }
+
+    return this.prisma.guild.update({ where: { id: guildId }, data });
   }
 
   async deleteGuild(guildId: string, userId: string) {
