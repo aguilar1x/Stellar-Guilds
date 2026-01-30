@@ -51,7 +51,7 @@ export default function BountyDetailPage({ params }: PageProps) {
     toast.success("SUBMISSION RECEIVED", {
       description:
         "Your work has been encrypted and sent to the guild for review.",
-      icon: <CheckCircle2 className="text-emerald-500" size={18} />,
+      icon: <CheckCircle2 className="text-violet-500" size={18} />,
     });
     setViewState("completed");
   };
@@ -60,12 +60,12 @@ export default function BountyDetailPage({ params }: PageProps) {
     <div className="min-h-screen w-full bg-[#050505] text-white">
       <Toaster theme="dark" position="bottom-right" richColors />
 
-      <div className="fixed top-0 right-0 w-[500px] h-[500px] bg-emerald-500/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="fixed top-0 right-0 w-[500px] h-[500px] bg-violet-500/5 blur-[120px] rounded-full pointer-events-none" />
 
       <div className="max-w-7xl mx-auto p-6 lg:p-12 relative z-10">
         <Link
           href="/bounties"
-          className="inline-flex items-center gap-2 text-slate-500 hover:text-emerald-500 mb-10 transition-all group"
+          className="inline-flex items-center gap-2 text-slate-500 hover:text-violet-500 mb-10 transition-all group"
         >
           <ChevronLeft
             size={18}
@@ -86,7 +86,7 @@ export default function BountyDetailPage({ params }: PageProps) {
                   }
                 />
                 <div className="h-1 w-1 bg-slate-700 rounded-full" />
-                <span className="text-[10px] font-mono text-emerald-500 uppercase tracking-widest bg-emerald-500/10 px-2 py-1 rounded">
+                <span className="text-[10px] font-mono text-violet-500 uppercase tracking-widest bg-violet-500/10 px-2 py-1 rounded">
                   {bounty.difficulty}
                 </span>
               </div>
@@ -101,7 +101,7 @@ export default function BountyDetailPage({ params }: PageProps) {
                     key={tag}
                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-medium text-slate-300"
                   >
-                    <Code2 size={12} className="text-emerald-500" />
+                    <Code2 size={12} className="text-violet-500" />
                     {tag}
                   </span>
                 ))}
@@ -132,12 +132,12 @@ export default function BountyDetailPage({ params }: PageProps) {
             </div>
 
             <section className="relative">
-              <div className="absolute -left-6 top-0 bottom-0 w-[1px] bg-gradient-to-b from-emerald-500/50 to-transparent hidden lg:block" />
+              <div className="absolute -left-6 top-0 bottom-0 w-[1px] bg-gradient-to-b from-violet-500/50 to-transparent hidden lg:block" />
               <h2 className="text-xs font-black uppercase tracking-[0.4em] text-slate-500 mb-8 flex items-center gap-3">
                 Technical Requirements{" "}
                 <div className="h-[1px] flex-grow bg-white/5" />
               </h2>
-              <div className="prose prose-invert max-w-none prose-emerald">
+              <div className="prose prose-invert max-w-none prose-violet">
                 <ReactMarkdown>{bounty.description}</ReactMarkdown>
               </div>
             </section>
@@ -145,7 +145,7 @@ export default function BountyDetailPage({ params }: PageProps) {
 
           <div className="lg:col-span-4 space-y-6">
             <div className="bg-[#0A0A0A] border border-white/10 rounded-[32px] p-8   overflow-hidden">
-              <div className="absolute -top-24 -right-24 w-48 h-48 bg-emerald-500/10 blur-[60px] rounded-full" />
+              <div className="absolute -top-24 -right-24 w-48 h-48 bg-violet-500/10 blur-[60px] rounded-full" />
 
               <div className="relative z-10">
                 <p className="text-[10px] text-slate-500 uppercase font-black tracking-[0.3em] mb-4">
@@ -155,7 +155,7 @@ export default function BountyDetailPage({ params }: PageProps) {
                   <span className="text-6xl font-black italic tracking-tighter text-white">
                     {bounty.rewardAmount}
                   </span>
-                  <span className="text-2xl font-bold text-emerald-500">
+                  <span className="text-2xl font-bold text-violet-500">
                     {bounty.tokenSymbol}
                   </span>
                 </div>
@@ -179,7 +179,7 @@ export default function BountyDetailPage({ params }: PageProps) {
                   {viewState === "idle" && (
                     <button
                       onClick={handleClaim}
-                      className="w-full bg-white text-black py-5 rounded-2xl font-black uppercase tracking-widest hover:bg-emerald-500 transition-all active:scale-95 shadow-[0_0_30px_rgba(255,255,255,0.1)]"
+                      className="w-full bg-white text-black py-5 rounded-2xl font-black uppercase tracking-widest hover:bg-violet-500 transition-all active:scale-95 shadow-[0_0_30px_rgba(255,255,255,0.1)]"
                     >
                       Initialize Mission
                     </button>
@@ -188,7 +188,7 @@ export default function BountyDetailPage({ params }: PageProps) {
                   {viewState === "claimed" && (
                     <button
                       onClick={() => setViewState("submitting")}
-                      className="w-full bg-emerald-500 text-black py-5 rounded-2xl font-black uppercase tracking-widest transition-all hover:bg-emerald-400"
+                      className="w-full bg-violet-500 text-black py-5 rounded-2xl font-black uppercase tracking-widest transition-all hover:bg-violet-400"
                     >
                       Upload Submission
                     </button>
@@ -202,7 +202,7 @@ export default function BountyDetailPage({ params }: PageProps) {
                   )}
 
                   {viewState === "completed" && (
-                    <div className="w-full bg-white/5 border border-white/10 text-emerald-500 py-5 rounded-2xl font-black uppercase tracking-widest text-center flex items-center justify-center gap-2">
+                    <div className="w-full bg-white/5 border border-white/10 text-violet-500 py-5 rounded-2xl font-black uppercase tracking-widest text-center flex items-center justify-center gap-2">
                       <CheckCircle2 size={18} />
                       Submitted
                     </div>
@@ -246,7 +246,7 @@ const BentoStat = ({
   value: string;
 }) => (
   <div className="bg-white/5 border border-white/10 rounded-2xl p-4 hover:bg-white/[0.08] transition-colors">
-    <div className="text-emerald-500 mb-2">{icon}</div>
+    <div className="text-violet-500 mb-2">{icon}</div>
     <p className="text-[9px] uppercase font-black text-slate-500 tracking-tighter mb-1">
       {label}
     </p>
@@ -262,7 +262,7 @@ const SidebarInfo = ({
   text: string;
 }) => (
   <div className="flex items-center gap-3 text-xs font-medium text-slate-400">
-    <div className="text-emerald-500">{icon}</div>
+    <div className="text-violet-500">{icon}</div>
     {text}
   </div>
 );

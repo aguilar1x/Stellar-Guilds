@@ -54,7 +54,7 @@ export default function Footer() {
           <div className="flex items-center gap-2 text-sm text-slate-500">
             <span>Built on</span>
             <span className="font-semibold text-slate-400">Stellar</span>
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="w-2 h-2 rounded-full bg-violet-400 animate-pulse" />
           </div>
         </div>
       </div>

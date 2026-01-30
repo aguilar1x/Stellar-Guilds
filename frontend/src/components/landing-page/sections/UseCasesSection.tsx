@@ -45,7 +45,7 @@ export default function UseCasesSection() {
       title: "Gaming Guilds",
       description:
         "Play-to-earn teams managing assets, distributing earnings, and coordinating play.",
-      gradient: "from-emerald-600 to-teal-700",
+      gradient: "from-violet-600 to-teal-700",
     },
   ];
 

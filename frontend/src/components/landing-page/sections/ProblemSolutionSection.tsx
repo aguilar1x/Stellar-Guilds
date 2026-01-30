@@ -24,7 +24,7 @@ export default function ProblemSolutionSection() {
       {/* Background decorations */}
       <div className="absolute inset-0">
         <div className="absolute top-1/2 left-0 w-96 h-96 bg-red-500/5 rounded-full blur-[100px]" />
-        <div className="absolute top-1/2 right-0 w-96 h-96 bg-emerald-500/5 rounded-full blur-[100px]" />
+        <div className="absolute top-1/2 right-0 w-96 h-96 bg-violet-500/5 rounded-full blur-[100px]" />
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -98,12 +98,12 @@ export default function ProblemSolutionSection() {
             viewport={{ once: true }}
             className="relative group"
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-transparent rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            <div className="relative p-8 lg:p-10 rounded-3xl bg-slate-900/80 border border-slate-800 hover:border-emerald-500/30 transition-colors duration-300">
+            <div className="absolute inset-0 bg-gradient-to-br from-violet-500/10 to-transparent rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="relative p-8 lg:p-10 rounded-3xl bg-slate-900/80 border border-slate-800 hover:border-violet-500/30 transition-colors duration-300">
               {/* Header */}
               <div className="flex items-center gap-4 mb-8">
-                <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center">
-                  <Sparkles className="w-7 h-7 text-emerald-400" />
+                <div className="w-14 h-14 rounded-2xl bg-violet-500/10 flex items-center justify-center">
+                  <Sparkles className="w-7 h-7 text-violet-400" />
                 </div>
                 <div>
                   <h3 className="text-2xl font-bold text-white">Our Solution</h3>
@@ -120,10 +120,10 @@ export default function ProblemSolutionSection() {
                     whileInView={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.4, delay: index * 0.1 }}
                     viewport={{ once: true }}
-                    className="flex items-start gap-4 p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/20"
+                    className="flex items-start gap-4 p-4 rounded-xl bg-violet-500/5 border border-violet-500/20"
                   >
-                    <div className="flex-shrink-0 w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center mt-0.5">
-                      <Check className="w-3.5 h-3.5 text-emerald-400" />
+                    <div className="flex-shrink-0 w-6 h-6 rounded-full bg-violet-500/20 flex items-center justify-center mt-0.5">
+                      <Check className="w-3.5 h-3.5 text-violet-400" />
                     </div>
                     <p className="text-slate-300">{solution}</p>
                   </motion.div>

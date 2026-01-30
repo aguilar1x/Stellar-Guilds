@@ -12,11 +12,12 @@ import { ActivityTimeline } from "@/features/profile/components/ActivityTimeline
 import { Settings, Share2, MapPin } from "lucide-react";
 import Link from "next/link";
 
-export default function ProfilePage({
+export default async function ProfilePage({
   params,
 }: {
-  params: { address: string };
+  params: Promise<{ address: string }>;
 }) {
+  const { address } = await params;
   return (
 
     

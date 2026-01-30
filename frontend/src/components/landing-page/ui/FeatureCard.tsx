@@ -2,7 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { LucideIcon } from "lucide-react";
 
-type AccentColor = "violet" | "cyan" | "amber" | "emerald" | "rose" | "blue";
+type AccentColor = "violet" | "cyan" | "amber" | "violet" | "rose" | "blue";
 
 interface FeatureCardProps {
   icon: LucideIcon;
@@ -25,7 +25,7 @@ export default function FeatureCard({
     cyan: "from-violet-500/20 to-violet-600/5 group-hover:from-violet-500/30 border-violet-500/20 group-hover:border-violet-500/40",
     amber:
       "from-violet-500/20 to-violet-600/5 group-hover:from-violet-500/30 border-violet-500/20 group-hover:border-violet-500/40",
-    emerald:
+    violet:
       "from-violet-500/20 to-violet-600/5 group-hover:from-violet-500/30 border-violet-500/20 group-hover:border-violet-500/40",
     rose: "from-violet-500/20 to-violet-600/5 group-hover:from-violet-500/30 border-violet-500/20 group-hover:border-violet-500/40",
     blue: "from-violet-500/20 to-violet-600/5 group-hover:from-violet-500/30 border-violet-500/20 group-hover:border-violet-500/40",
@@ -35,7 +35,7 @@ export default function FeatureCard({
     violet: "text-violet-400 group-hover:text-violet-300",
     cyan: "text-violet-400 group-hover:text-violet-300",
     amber: "text-violet-400 group-hover:text-violet-300",
-    emerald: "text-violet-400 group-hover:text-violet-300",
+    violet: "text-violet-400 group-hover:text-violet-300",
     rose: "text-violet-400 group-hover:text-violet-300",
     blue: "text-violet-400 group-hover:text-violet-300",
   };
@@ -44,7 +44,7 @@ export default function FeatureCard({
     violet: "group-hover:shadow-violet-500/20",
     cyan: "group-hover:shadow-violet-500/20",
     amber: "group-hover:shadow-violet-500/20",
-    emerald: "group-hover:shadow-violet-500/20",
+    violet: "group-hover:shadow-violet-500/20",
     rose: "group-hover:shadow-violet-500/20",
     blue: "group-hover:shadow-violet-500/20",
   };

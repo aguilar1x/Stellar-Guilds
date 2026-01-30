@@ -4,7 +4,7 @@ import { LucideIcon } from "lucide-react";
 import { Users, Target, Wallet, Milestone, Scale, Award } from "lucide-react";
 import FeatureCard from "@/components/landing-page/ui/FeatureCard";
 
-type AccentColor = "violet" | "cyan" | "amber" | "emerald" | "rose" | "blue";
+type AccentColor = "violet" | "cyan" | "amber" | "violet" | "rose" | "blue";
 
 interface Feature {
   icon: LucideIcon;
@@ -34,7 +34,7 @@ export default function FeaturesSection() {
       title: "Payment Distribution",
       description:
         "Automated payment splitting based on contribution. Support for XLM, USDC, and custom Stellar tokens with instant settlement.",
-      accentColor: "emerald",
+      accentColor: "violet",
     },
     {
       icon: Milestone,
@@ -111,7 +111,7 @@ export default function FeaturesSection() {
           <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-slate-800/50 border border-slate-700/50">
             <span className="text-slate-400">Powered by</span>
             <span className="font-semibold text-white">Stellar Soroban</span>
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="w-2 h-2 rounded-full bg-violet-400 animate-pulse" />
           </div>
         </motion.div>
       </div>

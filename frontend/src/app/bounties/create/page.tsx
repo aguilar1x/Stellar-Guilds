@@ -78,14 +78,14 @@ export default function CreateBountyPage() {
       <div className="max-w-5xl mx-auto">
         <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
           <div className="space-y-2">
-            <div className="flex items-center gap-2 text-emerald-500 mb-1">
-              <Zap size={14} className="fill-emerald-500" />
+            <div className="flex items-center gap-2 text-violet-500 mb-1">
+              <Zap size={14} className="fill-violet-500" />
               <span className="text-[10px] font-black uppercase tracking-[0.4em]">
                 Deployment Terminal
               </span>
             </div>
             <h1 className="text-5xl font-black italic tracking-tighter uppercase leading-none">
-              Forge <span className="text-emerald-500">Mission.</span>
+              Forge <span className="text-violet-500">Mission.</span>
             </h1>
           </div>
 
@@ -129,7 +129,7 @@ export default function CreateBountyPage() {
                         />
                         <input
                           {...register("title")}
-                          className={`w-full bg-white/5 border rounded-2xl py-4 px-6 outline-none transition-all text-lg font-bold italic ${errors.title ? "border-red-500/50 bg-red-500/5" : "border-white/10 focus:border-emerald-500/50"}`}
+                          className={`w-full bg-white/5 border rounded-2xl py-4 px-6 outline-none transition-all text-lg font-bold italic ${errors.title ? "border-red-500/50 bg-red-500/5" : "border-white/10 focus:border-violet-500/50"}`}
                           placeholder="Project Name..."
                         />
                       </div>
@@ -146,7 +146,7 @@ export default function CreateBountyPage() {
                                 key={guild}
                                 type="button"
                                 onClick={() => handleGuildSelect(guild)}
-                                className={`p-4 rounded-xl border text-[10px] font-black uppercase tracking-widest transition-all ${formData.guild === guild ? "bg-emerald-500 border-emerald-500 text-black shadow-[0_0_20px_rgba(16,185,129,0.2)]" : "bg-white/5 border-white/10 text-slate-500 hover:border-white/20"}`}
+                                className={`p-4 rounded-xl border text-[10px] font-black uppercase tracking-widest transition-all ${formData.guild === guild ? "bg-violet-500 border-violet-500 text-black shadow-[0_0_20px_rgba(16,185,129,0.2)]" : "bg-white/5 border-white/10 text-slate-500 hover:border-white/20"}`}
                               >
                                 {guild}
                               </button>
@@ -167,7 +167,7 @@ export default function CreateBountyPage() {
                       <textarea
                         {...register("description")}
                         rows={8}
-                        className={`w-full bg-white/5 border rounded-2xl py-4 px-6 outline-none transition-all font-mono text-sm leading-relaxed ${errors.description ? "border-red-500/50 bg-red-500/5" : "border-white/10 focus:border-emerald-500/50"}`}
+                        className={`w-full bg-white/5 border rounded-2xl py-4 px-6 outline-none transition-all font-mono text-sm leading-relaxed ${errors.description ? "border-red-500/50 bg-red-500/5" : "border-white/10 focus:border-violet-500/50"}`}
                         placeholder="Detail the parameters of the mission..."
                       />
                     </div>
@@ -182,7 +182,7 @@ export default function CreateBountyPage() {
                   <h2 className="text-4xl font-black italic uppercase tracking-tighter mb-8">
                     {formData.title || "Untitled Mission"}
                   </h2>
-                  <div className="prose prose-invert max-w-none prose-emerald">
+                  <div className="prose prose-invert max-w-none prose-violet">
                     <ReactMarkdown>
                       {formData.description || "_Intel pending..._"}
                     </ReactMarkdown>
@@ -204,7 +204,7 @@ export default function CreateBountyPage() {
                     <input
                       {...register("reward")}
                       placeholder="0.00"
-                      className="flex-grow bg-white/5 border border-white/10 rounded-xl py-3 px-4 outline-none focus:border-emerald-500/50 font-bold"
+                      className="flex-grow bg-white/5 border border-white/10 rounded-xl py-3 px-4 outline-none focus:border-violet-500/50 font-bold"
                     />
                   </div>
                 </div>
@@ -217,7 +217,7 @@ export default function CreateBountyPage() {
                   <input
                     type="date"
                     {...register("deadline")}
-                    className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 outline-none focus:border-emerald-500/50 text-xs font-mono uppercase"
+                    className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 outline-none focus:border-violet-500/50 text-xs font-mono uppercase"
                   />
                 </div>
               </div>
@@ -228,7 +228,7 @@ export default function CreateBountyPage() {
 
                 <button
                   disabled={isSubmitting}
-                  className={`w-full py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] transition-all flex items-center justify-center gap-2 ${isValid ? "bg-emerald-500 text-black shadow-[0_0_30px_rgba(16,185,129,0.2)] hover:bg-emerald-400" : "bg-white/5 text-slate-600 cursor-not-allowed"}`}
+                  className={`w-full py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] transition-all flex items-center justify-center gap-2 ${isValid ? "bg-violet-500 text-black shadow-[0_0_30px_rgba(16,185,129,0.2)] hover:bg-violet-400" : "bg-white/5 text-slate-600 cursor-not-allowed"}`}
                 >
                   {isSubmitting ? (
                     "Syncing..."
@@ -301,7 +301,7 @@ const SummaryRow = ({ label, value, highlight }: any) => (
     <span className="text-slate-500">{label}</span>
     <span
       className={
-        highlight ? "text-emerald-500 flex items-center gap-1" : "text-white"
+        highlight ? "text-violet-500 flex items-center gap-1" : "text-white"
       }
     >
       {value} {highlight && <ShieldCheck size={12} />}

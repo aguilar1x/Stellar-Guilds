@@ -13,11 +13,11 @@ export const BountyCard = ({ bounty }: { bounty: Bounty }) => {
   return (
     <motion.div
       whileHover={{ y: -4 }}
-      className="group relative bg-[#0D0D0D] border border-white/5 rounded-2xl  p-6 transition-all hover:bg-[#121212] hover:border-emerald-500/30"
+      className="group relative bg-[#0D0D0D] border border-white/5 rounded-2xl  p-6 transition-all hover:bg-[#121212] hover:border-violet-500/30"
     >
       <div className="flex justify-between items-start mb-5">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20">
+          <div className="w-8 h-8 rounded-full bg-violet-500/10 flex items-center justify-center border border-violet-500/20">
             <img
               src={bounty.guildLogo}
               alt=""
@@ -32,7 +32,7 @@ export const BountyCard = ({ bounty }: { bounty: Bounty }) => {
       </div>
 
       <Link href={`/bounties/${bounty.id}`}>
-        <h3 className="text-xl font-bold max-w-[400px] text-white truncate mb-2 group-hover:text-emerald-400 transition-colors">
+        <h3 className="text-xl font-bold max-w-[400px] text-white truncate mb-2 group-hover:text-violet-400 transition-colors">
           {bounty.title}
         </h3>
       </Link>
@@ -61,14 +61,14 @@ export const BountyCard = ({ bounty }: { bounty: Bounty }) => {
             <span className="text-2xl font-black text-white italic tracking-tighter">
               {bounty.rewardAmount}
             </span>
-            <span className="text-sm font-medium text-emerald-500 tracking-widest">
+            <span className="text-sm font-medium text-violet-500 tracking-widest">
               {bounty.tokenSymbol}
             </span>
           </div>
         </div>
         <Link
           href={`/bounties/${bounty.id}`}
-          className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white group-hover:bg-emerald-500 group-hover:text-black transition-all"
+          className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white group-hover:bg-violet-500 group-hover:text-black transition-all"
         >
           <ArrowUpRight size={20} />
         </Link>
@@ -79,7 +79,7 @@ export const BountyCard = ({ bounty }: { bounty: Bounty }) => {
 
 export const StatusBadge = ({ status }: StatusBadgeProps) => {
   const styles: Record<BountyStatus, string> = {
-    Open: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
+    Open: "bg-violet-500/10 text-violet-500 border-violet-500/20",
     Claimed: "bg-blue-500/10 text-blue-400 border-blue-500/20",
     "Under Review": "bg-amber-500/10 text-amber-500 border-amber-500/20",
     Completed: "bg-slate-800 text-slate-400 border-white/5",

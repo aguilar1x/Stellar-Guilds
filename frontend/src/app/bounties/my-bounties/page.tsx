@@ -35,13 +35,13 @@ export default function MyBountiesDashboard() {
   }, [activeTab]);
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white p-4 md:p-8 lg:p-12 selection:bg-emerald-500/30">
+    <div className="min-h-screen bg-[#050505] text-white p-4 md:p-8 lg:p-12 selection:bg-violet-500/30">
       <div className="max-w-7xl mx-auto space-y-12">
         
         <header className="flex flex-col md:flex-row md:items-end justify-between gap-8">
           <div className="space-y-4">
-            <div className="flex items-center gap-3 text-emerald-500">
-              <div className="p-2 bg-emerald-500/10 rounded-lg border border-emerald-500/20">
+            <div className="flex items-center gap-3 text-violet-500">
+              <div className="p-2 bg-violet-500/10 rounded-lg border border-violet-500/20">
                 <LayoutDashboard size={20} />
               </div>
               <span className="text-[10px] font-black uppercase tracking-[0.5em]">
@@ -49,13 +49,13 @@ export default function MyBountiesDashboard() {
               </span>
             </div>
             <h1 className="text-5xl md:text-7xl font-black italic tracking-tighter uppercase leading-none">
-              Command <span className="text-emerald-500">Center</span>
+              Command <span className="text-violet-500">Center</span>
             </h1>
           </div>
 
           <div className="flex flex-wrap gap-4">
             <Link href="/bounties/create">
-              <button className="flex items-center gap-3 bg-white text-black px-8 py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest hover:bg-emerald-500 transition-all active:scale-95 shadow-[0_0_20px_rgba(255,255,255,0.1)]">
+              <button className="flex items-center gap-3 bg-white text-black px-8 py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest hover:bg-violet-500 transition-all active:scale-95 shadow-[0_0_20px_rgba(255,255,255,0.1)]">
                 <PlusCircle size={14} />
                 Deploy New Mission
               </button>
@@ -68,25 +68,25 @@ export default function MyBountiesDashboard() {
             label="Total Revenue"
             value="$12,840"
             trend="+12% this month"
-            icon={<Zap className="text-emerald-500" size={16} />}
+            icon={<Zap className="text-violet-500" size={16} />}
           />
           <StatCard
             label="Success Rate"
             value="98.2%"
             trend="Elite Tier"
-            icon={<Target className="text-emerald-500" size={16} />}
+            icon={<Target className="text-violet-500" size={16} />}
           />
           <StatCard
             label="Reputation"
             value="Lv. 24"
             trend="Rank #142 Global"
-            icon={<Trophy className="text-emerald-500" size={16} />}
+            icon={<Trophy className="text-violet-500" size={16} />}
           />
           <StatCard
             label="Avg. Payout"
             value="1,400 USDC"
             trend="Stable"
-            icon={<TrendingUp className="text-emerald-500" size={16} />}
+            icon={<TrendingUp className="text-violet-500" size={16} />}
           />
         </div>
 
@@ -101,7 +101,7 @@ export default function MyBountiesDashboard() {
                     onClick={() => setActiveTab(tab)}
                     className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
                       activeTab === tab
-                        ? "bg-emerald-500 text-black shadow-[0_0_20px_rgba(16,185,129,0.2)]"
+                        ? "bg-violet-500 text-black shadow-[0_0_20px_rgba(16,185,129,0.2)]"
                         : "text-slate-500 hover:text-slate-300"
                     }`}
                   >
@@ -170,7 +170,7 @@ export default function MyBountiesDashboard() {
             </div>
 
             {/* Guild Connect / Ads */}
-            <div className="relative group overflow-hidden bg-gradient-to-br from-emerald-600 to-emerald-900 rounded-[32px] p-8">
+            <div className="relative group overflow-hidden bg-gradient-to-br from-violet-600 to-violet-900 rounded-[32px] p-8">
                 <div className="absolute -right-8 -bottom-8 opacity-20 group-hover:scale-110 transition-transform">
                     <Zap size={180} />
                 </div>
@@ -178,7 +178,7 @@ export default function MyBountiesDashboard() {
                     <h3 className="text-2xl font-black italic tracking-tighter uppercase leading-tight">
                         Elevate your <br/> Standing
                     </h3>
-                    <p className="text-emerald-100/70 text-xs font-light leading-relaxed">
+                    <p className="text-violet-100/70 text-xs font-light leading-relaxed">
                         Top 5% contributors get access to private high-yield pools. Keep shipping.
                     </p>
                 </div>
@@ -193,12 +193,12 @@ export default function MyBountiesDashboard() {
 
 
 const StatCard = ({ label, value, trend, icon }: any) => (
-  <div className="bg-[#0A0A0A] border border-white/5 p-8 rounded-[32px] hover:border-emerald-500/30 transition-all group">
+  <div className="bg-[#0A0A0A] border border-white/5 p-8 rounded-[32px] hover:border-violet-500/30 transition-all group">
     <div className="flex justify-between items-start mb-6">
-      <div className="p-3 bg-white/5 rounded-2xl border border-white/5 group-hover:bg-emerald-500/10 transition-colors">
+      <div className="p-3 bg-white/5 rounded-2xl border border-white/5 group-hover:bg-violet-500/10 transition-colors">
         {icon}
       </div>
-      <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest px-2 py-1 bg-emerald-500/10 rounded-lg">
+      <span className="text-[9px] font-black text-violet-500 uppercase tracking-widest px-2 py-1 bg-violet-500/10 rounded-lg">
         {trend}
       </span>
     </div>
@@ -211,7 +211,7 @@ const ActivityItem = ({ title, desc, time, status }: any) => {
   const dots: any = {
     review: "bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.5)]",
     claim: "bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]",
-    success: "bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]"
+    success: "bg-violet-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]"
   };
 
   return (

@@ -56,8 +56,8 @@ export default function MarketplacePage() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-[#050505] text-white selection:bg-emerald-500/30">
-      <div className="w-full bg-emerald-500/5 border-b border-emerald-500/10 py-2 overflow-hidden whitespace-nowrap">
+    <div className="min-h-screen w-full bg-[#050505] text-white selection:bg-violet-500/30">
+      <div className="w-full bg-violet-500/5 border-b border-violet-500/10 py-2 overflow-hidden whitespace-nowrap">
         <motion.div
           animate={{ x: [0, -1000] }}
           transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
@@ -66,7 +66,7 @@ export default function MarketplacePage() {
           {[1, 2, 3, 4, 5].map((i) => (
             <div
               key={i}
-              className="flex gap-8 items-center text-[9px] font-mono text-emerald-500/60 uppercase tracking-[0.2em]"
+              className="flex gap-8 items-center text-[9px] font-mono text-violet-500/60 uppercase tracking-[0.2em]"
             >
               <span className="flex items-center gap-2">
                 <Activity size={10} /> Network Load: Stable
@@ -83,20 +83,20 @@ export default function MarketplacePage() {
       </div>
 
       <div className="relative border-b border-white/5 bg-[#080808] overflow-hidden">
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-emerald-500/10 blur-[140px] rounded-full -translate-y-1/2 translate-x-1/4" />
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-violet-500/10 blur-[140px] rounded-full -translate-y-1/2 translate-x-1/4" />
         <div className="max-w-7xl mx-auto px-6 py-16 relative z-10">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="flex items-center gap-2 mb-6 text-emerald-500"
+            className="flex items-center gap-2 mb-6 text-violet-500"
           >
-            <Zap className="fill-emerald-500" size={14} />
+            <Zap className="fill-violet-500" size={14} />
             <span className="text-[10px] font-black uppercase tracking-[0.4em]">
               Protocol Active
             </span>
           </motion.div>
           <h1 className="text-6xl md:text-8xl font-black italic tracking-tighter mb-4 uppercase leading-none">
-            Forge <span className="text-emerald-500">Value.</span>
+            Forge <span className="text-violet-500">Value.</span>
           </h1>
           <p className="text-slate-500 text-lg max-w-xl font-light">
             Deploy your skills to the world most aggressive guilds.
@@ -111,17 +111,17 @@ export default function MarketplacePage() {
               Contributor Hub
             </h4>
             <Link href="/bounties/my-bounties">
-              <div className="group relative bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-4 hover:border-emerald-500/50 transition-all cursor-pointer overflow-hidden">
-                <div className="absolute -right-4 -bottom-4 text-emerald-500/10 group-hover:scale-110 transition-transform">
+              <div className="group relative bg-violet-500/10 border border-violet-500/20 rounded-2xl p-4 hover:border-violet-500/50 transition-all cursor-pointer overflow-hidden">
+                <div className="absolute -right-4 -bottom-4 text-violet-500/10 group-hover:scale-110 transition-transform">
                   <LayoutDashboard size={80} />
                 </div>
                 <div className="flex items-center gap-3 mb-1">
-                  <LayoutDashboard size={16} className="text-emerald-500" />
+                  <LayoutDashboard size={16} className="text-violet-500" />
                   <span className="text-xs font-black uppercase">
                     My Operations
                   </span>
                 </div>
-                <p className="text-[10px] text-emerald-100/60 font-light">
+                <p className="text-[10px] text-violet-100/60 font-light">
                   Track earnings & active claims
                 </p>
               </div>
@@ -141,7 +141,7 @@ export default function MarketplacePage() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Find missions..."
-                className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-sm focus:border-emerald-500/50 transition-all outline-none"
+                className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-sm focus:border-violet-500/50 transition-all outline-none"
               />
             </div>
           </div>
@@ -204,7 +204,7 @@ export default function MarketplacePage() {
           <div className="flex flex-col md:flex-row justify-between items-center mb-10 pb-6 border-b border-white/5 gap-4">
             <div className="flex items-center gap-6">
               <div className="flex items-center gap-2">
-                <Target size={14} className="text-emerald-500" />
+                <Target size={14} className="text-violet-500" />
                 <span className="text-[10px] font-mono font-bold">
                   {filteredAndSortedBounties.length} RECOGNIZED MISSIONS
                 </span>
@@ -263,7 +263,7 @@ const CategoryBtn = ({ icon, label, active, onClick }: any) => (
     onClick={onClick}
     className={`flex items-center justify-center gap-2 py-3 rounded-xl border text-[10px] font-black uppercase tracking-widest transition-all ${
       active
-        ? "bg-emerald-500 border-emerald-500 text-black"
+        ? "bg-violet-500 border-violet-500 text-black"
         : "bg-white/5 border-white/10 text-slate-500 hover:text-white"
     }`}
   >
@@ -279,7 +279,7 @@ const EmptyState = ({ onReset }: any) => (
     </h3>
     <button
       onClick={onReset}
-      className="px-8 py-3 bg-emerald-500 text-black text-[10px] font-black uppercase tracking-widest rounded-full hover:shadow-[0_0_20px_rgba(16,185,129,0.4)] transition-all"
+      className="px-8 py-3 bg-violet-500 text-black text-[10px] font-black uppercase tracking-widest rounded-full hover:shadow-[0_0_20px_rgba(16,185,129,0.4)] transition-all"
     >
       Refresh Terminal
     </button>
