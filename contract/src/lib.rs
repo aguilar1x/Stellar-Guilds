@@ -57,14 +57,6 @@ use payment::{
     validate_distribution as pay_validate_distribution, DistributionRule, DistributionStatus,
 };
 
-mod dispute;
-use dispute::{
-    calculate_vote_weight as dispute_calculate_vote_weight, cast_vote as dispute_cast_vote,
-    create_dispute as dispute_create_dispute, execute_resolution as dispute_execute_resolution,
-    resolve_dispute as dispute_resolve_dispute, submit_evidence as dispute_submit_evidence,
-    tally_votes as dispute_tally_votes,
-};
-
 /// Stellar Guilds - Main Contract Entry Point
 ///
 /// This is the foundational contract for the Stellar Guilds platform.
@@ -421,80 +413,6 @@ impl StellarGuildsContract {
     /// Vector of results (true for success, false for failure) for each pool
     pub fn batch_distribute(env: Env, pool_ids: Vec<u64>, caller: Address) -> Vec<bool> {
         pay_batch_distribute(&env, pool_ids, caller)
-    }
-
-    // ============ Dispute Functions ============
-
-    /// Create a dispute for a bounty or milestone
-    ///
-    /// # Arguments
-    /// * `reference_id` - Bounty or milestone ID
-    /// * `plaintiff` - Address opening the dispute
-    /// * `defendant` - Address responding to the dispute
-    /// * `reason` - Dispute reason
-    /// * `evidence_url` - Initial evidence URL
-    ///
-    /// # Returns
-    /// The ID of the newly created dispute
-    pub fn create_dispute(
-        env: Env,
-        reference_id: u64,
-        plaintiff: Address,
-        defendant: Address,
-        reason: String,
-        evidence_url: String,
-    ) -> u64 {
-        dispute_create_dispute(&env, reference_id, plaintiff, defendant, reason, evidence_url)
-    }
-
-    /// Submit evidence for an active dispute
-    pub fn submit_evidence(
-        env: Env,
-        dispute_id: u64,
-        party: Address,
-        evidence_url: String,
-    ) -> bool {
-        dispute_submit_evidence(&env, dispute_id, party, evidence_url)
-    }
-
-    /// Cast a weighted vote on a dispute
-    pub fn cast_dispute_vote(
-        env: Env,
-        dispute_id: u64,
-        voter: Address,
-        decision: dispute::types::VoteDecision,
-    ) -> bool {
-        dispute_cast_vote(&env, dispute_id, voter, decision)
-    }
-
-    /// Calculate voting weight for a guild member
-    pub fn calculate_dispute_vote_weight(
-        env: Env,
-        guild_id: u64,
-        voter: Address,
-    ) -> u32 {
-        dispute_calculate_vote_weight(&env, guild_id, voter)
-    }
-
-    /// Tally votes for a dispute
-    pub fn tally_dispute_votes(
-        env: Env,
-        dispute_id: u64,
-    ) -> dispute::types::Resolution {
-        dispute_tally_votes(&env, dispute_id)
-    }
-
-    /// Resolve a dispute and execute fund distribution
-    pub fn resolve_dispute(env: Env, dispute_id: u64) -> dispute::types::Resolution {
-        dispute_resolve_dispute(&env, dispute_id)
-    }
-
-    /// Execute a resolved dispute payout
-    pub fn execute_dispute_resolution(
-        env: Env,
-        dispute_id: u64,
-    ) -> Vec<dispute::types::FundDistribution> {
-        dispute_execute_resolution(&env, dispute_id)
     }
 
     // ============ Treasury Functions ============

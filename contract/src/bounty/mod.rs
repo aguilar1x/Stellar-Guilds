@@ -23,8 +23,6 @@ use crate::bounty::types::{
     BountyApprovedEvent, BountyCancelledEvent, BountyClaimedEvent, BountyCreatedEvent,
     BountyExpiredEvent, BountyFundedEvent, EscrowReleasedEvent, WorkSubmittedEvent,
 };
-use crate::dispute::storage as dispute_storage;
-use crate::dispute::types::DisputeReference;
 use crate::guild::membership::has_permission;
 use crate::guild::types::Role;
 use soroban_sdk::{Address, Env, String, Symbol, Vec};
@@ -362,11 +360,7 @@ pub fn approve_completion(env: &Env, bounty_id: u64, approver: Address) -> bool 
 /// - If bounty is not completed
 /// - If no claimer exists
 pub fn release_escrow(env: &Env, bounty_id: u64) -> bool {
-    if dispute_storage::is_reference_locked(env, &DisputeReference::Bounty, bounty_id) {
-        panic!("Bounty is in active dispute");
-    }
-
-    let mut bounty = get_bounty(env, bounty_id).expect("Bounty not found");
+    let bounty = get_bounty(env, bounty_id).expect("Bounty not found");
 
     // Must be completed
     if bounty.status != BountyStatus::Completed {
@@ -378,9 +372,6 @@ pub fn release_escrow(env: &Env, bounty_id: u64) -> bool {
     // Release funds to claimer
     if bounty.funded_amount > 0 {
         release_funds(env, &bounty.token, &claimer, bounty.funded_amount);
-
-        bounty.funded_amount = 0;
-        store_bounty(env, &bounty);
 
         // Emit release event
         env.events().publish(
@@ -413,10 +404,6 @@ pub fn release_escrow(env: &Env, bounty_id: u64) -> bool {
 /// - If bounty is already completed or cancelled
 pub fn cancel_bounty(env: &Env, bounty_id: u64, canceller: Address) -> bool {
     canceller.require_auth();
-
-    if dispute_storage::is_reference_locked(env, &DisputeReference::Bounty, bounty_id) {
-        panic!("Bounty is in active dispute");
-    }
 
     let mut bounty = get_bounty(env, bounty_id).expect("Bounty not found");
 
@@ -471,10 +458,6 @@ pub fn cancel_bounty(env: &Env, bounty_id: u64, canceller: Address) -> bool {
 /// # Returns
 /// `true` if bounty was expired and refunded
 pub fn expire_bounty(env: &Env, bounty_id: u64) -> bool {
-    if dispute_storage::is_reference_locked(env, &DisputeReference::Bounty, bounty_id) {
-        panic!("Bounty is in active dispute");
-    }
-
     let mut bounty = get_bounty(env, bounty_id).expect("Bounty not found");
 
     // Already expired or completed
